@@ -1,5 +1,5 @@
 /* YouTube Native Share - An iOS Tweak to replace YouTube's share sheet and remove source identifiers.
- * Copyright (C) 2024 YouTube Native Share
+ * Copyright (C) 2024 YouTube Native Share Contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
