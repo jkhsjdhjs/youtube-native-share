@@ -114,6 +114,12 @@ Finally, it also replaces YouTubes own share sheet by the system share sheet:
 <img alt="Screenshot of YouTubes Share Sheet" src="youtube-share-sheet.png" width="400"/> <img alt="Screenshot of the Native Share Sheet" src="native-share-sheet.png" width="400"/>
 
 
+## License
+<img align="right" src="https://www.gnu.org/graphics/gplv3-127x51.png"/>
+
+This project is licensed under the GNU General Public License v3.0, see [LICENSE](LICENSE).
+
+
 ## Special Thanks
 Thanks to [iCraze](https://github.com/iCrazeiOS) for developing [YTStockShare](https://github.com/iCrazeiOS/YTStockShare), which inspired me to develop a similar tweak for newer YouTube versions.
 
