@@ -1,6 +1,7 @@
 # YouTube Native Share
 iOS Tweak to bypass YouTubes own share sheet and use the system activity view instead.
 Avoids requesting a source identifier (`si`) with your data and sharing it with other people.
+Compatible with all YouTube versions &geq; `17.32.2`.
 
 ## Why
 YouTubes share sheet sucks.
