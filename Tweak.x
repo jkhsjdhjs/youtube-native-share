@@ -51,6 +51,12 @@
 + (GPBExtensionDescriptor*)innertubeCommand;
 @end
 
+@interface YTIShareEntityEndpoint
+@property (nonatomic, assign, readwrite) BOOL hasSerializedShareEntity;
+@property (nonatomic, copy, readwrite) NSString *serializedShareEntity;
++ (GPBExtensionDescriptor*)shareEntityEndpoint;
+@end
+
 typedef NS_ENUM(NSInteger, ShareEntityType) {
     ShareEntityFieldVideo = 1,
     ShareEntityFieldPlaylist = 2,
@@ -68,29 +74,15 @@ static inline NSString* extractIdWithFormat(GPBUnknownFieldSet *fields, NSIntege
     return [NSString stringWithFormat:format, id];
 }
 
-%hook ELMPBShowActionSheetCommand
-- (void)executeWithCommandContext:(id)_context handler:(id)_handler {
-    if (!self.hasOnAppear)
-        return %orig;
-    GPBExtensionDescriptor *innertubeCommandDescriptor = [%c(YTIInnertubeCommandExtensionRoot) innertubeCommand];
-    if (![self.onAppear hasExtension:innertubeCommandDescriptor])
-        return %orig;
-    YTICommand *innertubeCommand = [self.onAppear getExtension:innertubeCommandDescriptor];
-    GPBExtensionDescriptor *updateShareSheetCommandDescriptor = [%c(YTIUpdateShareSheetCommand) updateShareSheetCommand];
-    if(![innertubeCommand hasExtension:updateShareSheetCommandDescriptor])
-        return %orig;
-    YTIUpdateShareSheetCommand *updateShareSheetCommand = [innertubeCommand getExtension:updateShareSheetCommandDescriptor];
-    if (!updateShareSheetCommand.hasSerializedShareEntity)
-        return %orig;
-
-    GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:updateShareSheetCommand.serializedShareEntity];
+static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
+    GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFieldSet *fields = shareEntity.unknownFields;
     NSString *shareUrl;
 
     if ([fields hasField:ShareEntityFieldClip]) {
         GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
         if ([shareEntityClip.lengthDelimitedList count] != 1)
-            return %orig;
+            return FALSE;
         GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
         shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
     }
@@ -111,9 +103,55 @@ static inline NSString* extractIdWithFormat(GPBUnknownFieldSet *fields, NSIntege
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldVideo, @"https://youtube.com/watch?v=%@");
 
     if (!shareUrl)
-        return %orig;
+        return FALSE;
 
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
     [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+    return TRUE;
+}
+
+
+/* -------------------- iPad Layout -------------------- */
+
+%hook YTShareRequestViewController
+- (id)initWithService:(id)_service parentResponder:(id)_parentResponder {
+    // disable the default share sheet behavior and force the app to call [YTAccountScopedCommandRouter handleCommand]
+    return NULL;
+}
+%end
+
+%hook YTAccountScopedCommandRouter
+- (BOOL)handleCommand:(id)command entry:(id)_entry fromView:(id)_fromView sender:(id)_sender completionBlock:(id)_completionBlock {
+    GPBExtensionDescriptor *shareEntityEndpointDescriptor = [%c(YTIShareEntityEndpoint) shareEntityEndpoint];
+    if (![command hasExtension:shareEntityEndpointDescriptor])
+        return %orig;
+    YTIShareEntityEndpoint *shareEntityEndpoint = [command getExtension:shareEntityEndpointDescriptor];
+    if(!shareEntityEndpoint.hasSerializedShareEntity)
+        return %orig;
+    if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity))
+        return %orig;
+    return TRUE;
+}
+%end
+
+
+/* ------------------- iPhone Layout ------------------- */
+
+%hook ELMPBShowActionSheetCommand
+- (void)executeWithCommandContext:(id)_context handler:(id)_handler {
+    if (!self.hasOnAppear)
+        return %orig;
+    GPBExtensionDescriptor *innertubeCommandDescriptor = [%c(YTIInnertubeCommandExtensionRoot) innertubeCommand];
+    if (![self.onAppear hasExtension:innertubeCommandDescriptor])
+        return %orig;
+    YTICommand *innertubeCommand = [self.onAppear getExtension:innertubeCommandDescriptor];
+    GPBExtensionDescriptor *updateShareSheetCommandDescriptor = [%c(YTIUpdateShareSheetCommand) updateShareSheetCommand];
+    if(![innertubeCommand hasExtension:updateShareSheetCommandDescriptor])
+        return %orig;
+    YTIUpdateShareSheetCommand *updateShareSheetCommand = [innertubeCommand getExtension:updateShareSheetCommandDescriptor];
+    if (!updateShareSheetCommand.hasSerializedShareEntity)
+        return %orig;
+    if (!showNativeShareSheet(updateShareSheetCommand.serializedShareEntity))
+        return %orig;
 }
 %end
