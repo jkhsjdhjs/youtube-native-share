@@ -82,7 +82,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     if ([fields hasField:ShareEntityFieldClip]) {
         GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
         if ([shareEntityClip.lengthDelimitedList count] != 1)
-            return FALSE;
+            return NO;
         GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
         shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
     }
@@ -103,11 +103,11 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldVideo, @"https://youtube.com/watch?v=%@");
 
     if (!shareUrl)
-        return FALSE;
+        return NO;
 
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
     [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
-    return TRUE;
+    return YES;
 }
 
 
@@ -130,7 +130,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
         return %orig;
     if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity))
         return %orig;
-    return TRUE;
+    return YES;
 }
 %end
 
