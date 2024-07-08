@@ -51,6 +51,10 @@
 + (GPBExtensionDescriptor*)innertubeCommand;
 @end
 
+@interface YTAccountScopedCommandResponderEvent
+@property (nonatomic, strong, readwrite) YTICommand *command;
+@end
+
 @interface YTIShareEntityEndpoint
 @property (nonatomic, assign, readwrite) BOOL hasSerializedShareEntity;
 @property (nonatomic, copy, readwrite) NSString *serializedShareEntity;
@@ -113,24 +117,14 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
 
 /* -------------------- iPad Layout -------------------- */
 
-%hook YTShareRequestViewController
-- (id)initWithService:(id)_service parentResponder:(id)_parentResponder {
-    // disable the default share sheet behavior and force the app to call [YTAccountScopedCommandRouter handleCommand]
-    return NULL;
-}
-%end
-
-%hook YTAccountScopedCommandRouter
-- (BOOL)handleCommand:(id)command entry:(id)_entry fromView:(id)_fromView sender:(id)_sender completionBlock:(id)_completionBlock {
+%hook YTAccountScopedCommandResponderEvent
+- (void)send {
     GPBExtensionDescriptor *shareEntityEndpointDescriptor = [%c(YTIShareEntityEndpoint) shareEntityEndpoint];
-    if (![command hasExtension:shareEntityEndpointDescriptor])
+    if (![self.command hasExtension:shareEntityEndpointDescriptor])
         return %orig;
-    YTIShareEntityEndpoint *shareEntityEndpoint = [command getExtension:shareEntityEndpointDescriptor];
-    if(!shareEntityEndpoint.hasSerializedShareEntity)
-        return %orig;
+    YTIShareEntityEndpoint *shareEntityEndpoint = [self.command getExtension:shareEntityEndpointDescriptor];
     if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity))
         return %orig;
-    return YES;
 }
 %end
 
