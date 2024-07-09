@@ -123,6 +123,8 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     if (![self.command hasExtension:shareEntityEndpointDescriptor])
         return %orig;
     YTIShareEntityEndpoint *shareEntityEndpoint = [self.command getExtension:shareEntityEndpointDescriptor];
+    if (!shareEntityEndpoint.hasSerializedShareEntity)
+        return %orig;
     if (!showNativeShareSheet(shareEntityEndpoint.serializedShareEntity))
         return %orig;
 }
