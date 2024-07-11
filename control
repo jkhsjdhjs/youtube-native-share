@@ -1,6 +1,6 @@
 Package: me.jkhsjdhjs.youtube-native-share
 Name: YouTube Native Share
-Version: 0.1.0
+Version: 0.2.0
 Architecture: iphoneos-arm
 Description: Bypass YouTubes own share sheet and use the system activity view instead.
  Avoids requesting a source identifier (si) with your data and sharing it with other people.
