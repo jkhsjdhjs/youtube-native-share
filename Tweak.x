@@ -109,11 +109,17 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     if (!shareUrl)
         return NO;
 
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc]initWithActivityItems:@[shareUrl] applicationActivities:nil];
-    [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:activityViewController animated:YES completion:^{}];
+    UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareUrl] applicationActivities:nil];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        [topViewController presentViewController:activityViewController animated:YES completion:^{}];
+    } else {
+        UIPopoverController *popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
+        CGRect rect = CGRectMake(CGRectGetMidX(topViewController.view.bounds), CGRectGetMaxY(topViewController.view.bounds), 0, 0);
+        [popoverController presentPopoverFromRect:rect inView:topViewController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
     return YES;
 }
-
 
 /* -------------------- iPad Layout -------------------- */
 
