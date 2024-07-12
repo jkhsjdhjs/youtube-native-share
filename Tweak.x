@@ -124,7 +124,8 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
     UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
 
     if (activityViewController.popoverPresentationController) {
-        activityViewController.popoverPresentationController.sourceView = sourceView;
+        activityViewController.popoverPresentationController.sourceView = topViewController.view;
+        activityViewController.popoverPresentationController.sourceRect = [sourceView convertRect:sourceView.bounds toView:topViewController.view];
     }
 
     [topViewController presentViewController:activityViewController animated:YES completion:nil];
