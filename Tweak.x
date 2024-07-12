@@ -109,15 +109,17 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity) {
     if (!shareUrl)
         return NO;
 
-    UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareUrl] applicationActivities:nil];
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        [topViewController presentViewController:activityViewController animated:YES completion:^{}];
-    } else {
-        UIPopoverController *popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
-        CGRect rect = CGRectMake(CGRectGetMidX(topViewController.view.bounds), CGRectGetMaxY(topViewController.view.bounds), 0, 0);
-        [popoverController presentPopoverFromRect:rect inView:topViewController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint];
+
+    UIViewController *topViewController = [%c(YTUIUtils) topViewControllerForPresenting];
+
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        activityViewController.popoverPresentationController.sourceView = topViewController.view;
     }
+
+    [topViewController presentViewController:activityViewController animated:YES completion:nil];
+
     return YES;
 }
 
