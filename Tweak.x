@@ -74,6 +74,7 @@ typedef NS_ENUM(NSInteger, ShareEntityType) {
     ShareEntityFieldVideo = 1,
     ShareEntityFieldPlaylist = 2,
     ShareEntityFieldChannel = 3,
+    ShareEntityFieldPost = 6,
     ShareEntityFieldClip = 8
 };
 
@@ -114,6 +115,9 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
 
     if (!shareUrl)
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldVideo, @"https://youtube.com/watch?v=%@");
+
+    if (!shareUrl)
+        shareUrl = extractIdWithFormat(fields, ShareEntityFieldPost, @"https://youtube.com/post/%@");
 
     if (!shareUrl)
         return NO;
