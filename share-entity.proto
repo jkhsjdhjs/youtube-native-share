@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message Clip {
+    string id = 1;
+}
+
+message ShareEntity {
+    string video = 1;
+    string playlist = 2;
+    string channel = 3;
+    string post = 6;
+    Clip clip = 8;
+    optional int32 unknown_short_value = 20;
+}

@@ -70,15 +70,7 @@
 + (GPBExtensionDescriptor*)shareEntityEndpoint;
 @end
 
-typedef NS_ENUM(NSInteger, ShareEntityType) {
-    ShareEntityFieldVideo = 1,
-    ShareEntityFieldPlaylist = 2,
-    ShareEntityFieldChannel = 3,
-    ShareEntityFieldPost = 6,
-    ShareEntityFieldClip = 8
-};
-
-static inline NSString* extractIdWithFormat(GPBUnknownFields *fields, NSInteger fieldNumber, NSString *format) {
+/*static inline NSString* extractIdWithFormat(GPBUnknownFields *fields, NSInteger fieldNumber, NSString *format) {
     NSArray<GPBUnknownField*> *fieldArray = [fields fields:fieldNumber];
     if (!fieldArray)
         return nil;
@@ -86,10 +78,17 @@ static inline NSString* extractIdWithFormat(GPBUnknownFields *fields, NSInteger 
         return nil;
     NSString *id = [[NSString alloc] initWithData:[fieldArray firstObject].lengthDelimited encoding:NSUTF8StringEncoding];
     return [NSString stringWithFormat:format, id];
-}
+}*/
 
 static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *sourceView) {
-    GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
+    NSLog(@"%@", serializedShareEntity);
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:serializedShareEntity options:0];
+    ShareEntity *shareEntity = [[ShareEntity alloc] initWithData:data error:nil];
+    static id temp = NULL;
+    temp = shareEntity;
+    NSLog(@"%p", temp);
+    return YES;
+    /*GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
     GPBUnknownFields *fields = [[%c(GPBUnknownFields) alloc] initFromMessage:shareEntity];
     NSString *shareUrl;
 
@@ -134,7 +133,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
 
     [topViewController presentViewController:activityViewController animated:YES completion:nil];
 
-    return YES;
+    return YES;*/
 }
 
 
