@@ -17,14 +17,14 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <UIKit/UIActivityViewController.h>
+#import <UIKit/UIActivityViewController.h>
 
-#include "YouTubeHeader/YTUIUtils.h"
+#import "YouTubeHeader/YTUIUtils.h"
 
-#include "protobuf/objectivec/GPBDescriptor.h"
-#include "protobuf/objectivec/GPBMessage.h"
-#include "protobuf/objectivec/GPBUnknownField.h"
-#include "protobuf/objectivec/GPBUnknownFieldSet.h"
+#import "protobuf/objectivec/GPBDescriptor.h"
+#import "protobuf/objectivec/GPBMessage.h"
+#import "protobuf/objectivec/GPBUnknownField.h"
+#import "protobuf/objectivec/GPBUnknownFieldSet.h"
 
 @interface CustomGPBMessage : GPBMessage
 + (instancetype)deserializeFromString:(NSString*)string;
