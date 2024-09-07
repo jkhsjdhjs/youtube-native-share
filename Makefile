@@ -6,7 +6,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = YouTubeNativeShare
 
-YouTubeNativeShare_FILES = Tweak.x proto/ShareEntity.pbobjc.x
+YouTubeNativeShare_FILES = Tweak.x proto/ShareEntity.pbobjc.m
 YouTubeNativeShare_CFLAGS = -fobjc-arc -Iprotobuf/objectivec
 YouTubeNativeShare_LIBRARIES = protobuf
 
