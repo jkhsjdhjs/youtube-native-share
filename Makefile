@@ -8,7 +8,6 @@ TWEAK_NAME = YouTubeNativeShare
 
 YouTubeNativeShare_FILES = Tweak.x proto/ShareEntity.pbobjc.m
 YouTubeNativeShare_CFLAGS = -fobjc-arc -Iprotobuf/objectivec
-YouTubeNativeShare_LIBRARIES = protobuf
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
