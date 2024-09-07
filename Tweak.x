@@ -21,10 +21,12 @@
 
 #import "YouTubeHeader/YTUIUtils.h"
 
-#import "protobuf/objectivec/GPBDescriptor.h"
-#import "protobuf/objectivec/GPBMessage.h"
-#import "protobuf/objectivec/GPBUnknownField.h"
-#import "protobuf/objectivec/GPBUnknownFields.h"
+#import "GPBDescriptor.h"
+#import "GPBMessage.h"
+#import "GPBUnknownField.h"
+#import "GPBUnknownFields.h"
+
+#import "proto/ShareEntity.pbobjc.h"
 
 @interface CustomGPBMessage : GPBMessage
 + (instancetype)deserializeFromString:(NSString*)string;
