@@ -75,7 +75,8 @@ typedef NS_ENUM(NSInteger, ShareEntityType) {
     ShareEntityFieldPlaylist = 2,
     ShareEntityFieldChannel = 3,
     ShareEntityFieldPost = 6,
-    ShareEntityFieldClip = 8
+    ShareEntityFieldClip = 8,
+    ShareEntityFieldShortFlag = 20
 };
 
 static inline NSString* extractIdWithFormat(GPBUnknownFields *fields, NSInteger fieldNumber, NSString *format) {
@@ -113,8 +114,12 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
         }
     }
 
-    if (!shareUrl)
-        shareUrl = extractIdWithFormat(fields, ShareEntityFieldVideo, @"https://youtube.com/watch?v=%@");
+    if (!shareUrl) {
+        NSString *format = @"https://youtube.com/watch?v=%@";
+        if ([fields fields:ShareEntityFieldShortFlag])
+            format = @"https://youtube.com/shorts/%@";
+        shareUrl = extractIdWithFormat(fields, ShareEntityFieldVideo, format);
+    }
 
     if (!shareUrl)
         shareUrl = extractIdWithFormat(fields, ShareEntityFieldPost, @"https://youtube.com/post/%@");
