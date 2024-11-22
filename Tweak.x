@@ -134,7 +134,14 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
 
     if (activityViewController.popoverPresentationController) {
         activityViewController.popoverPresentationController.sourceView = topViewController.view;
-        activityViewController.popoverPresentationController.sourceRect = [sourceView convertRect:sourceView.bounds toView:topViewController.view];
+        if (sourceView) {
+            activityViewController.popoverPresentationController.sourceRect = [sourceView convertRect:sourceView.bounds toView:topViewController.view];
+        }
+        else {
+            CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+            CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+            activityViewController.popoverPresentationController.sourceRect = CGRectMake(screenWidth / 2.0, screenHeight, 0, 0);
+        }
     }
 
     [topViewController presentViewController:activityViewController animated:YES completion:nil];
@@ -175,7 +182,10 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
     YTIUpdateShareSheetCommand *updateShareSheetCommand = [innertubeCommand getExtension:updateShareSheetCommandDescriptor];
     if (!updateShareSheetCommand.hasSerializedShareEntity)
         return %orig;
-    if (!showNativeShareSheet(updateShareSheetCommand.serializedShareEntity, context.context.fromView))
+    if (!showNativeShareSheet(updateShareSheetCommand.serializedShareEntity,
+            [context.context respondsToSelector:@selector(fromView)]
+            ? context.context.fromView
+            : nil))
         return %orig;
 }
 %end
