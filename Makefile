@@ -12,4 +12,4 @@ YouTubeNativeShare_CFLAGS = -fobjc-arc
 include $(THEOS_MAKE_PATH)/tweak.mk
 
 # https://github.com/theos/theos/issues/481
-SHELL = /usr/bin/bash
+SHELL := $(shell which bash)
